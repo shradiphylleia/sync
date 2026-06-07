@@ -5,9 +5,11 @@ import com.syncvault.dto.FileResponse;
 import com.syncvault.entity.FileEntity;
 import com.syncvault.exception.FileAlreadyExistsException;
 import com.syncvault.repository.FileRepository;
+import com.syncvault.repository.FileVersionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -18,7 +20,10 @@ import java.util.UUID;
 public class FileService {
 
 	private final FileRepository fileRepository;
+	private final FileVersionRepository fileVersionRepository;
+	private final FileVersionService fileVersionService;
 
+	@Transactional
 	public FileResponse createFile(CreateFileRequest request) {
 		if (fileRepository.existsByPath(request.path())) {
 			throw new FileAlreadyExistsException(request.path());
@@ -29,7 +34,10 @@ public class FileService {
 		file.setSizeBytes(request.sizeBytes());
 		file.setCurrentVersion(1L);
 
-		return toResponse(fileRepository.save(file));
+		FileEntity savedFile = fileRepository.save(file);
+		fileVersionRepository.save(fileVersionService.createVersionEntity(savedFile, 1L));
+
+		return toResponse(savedFile);
 	}
 
 	public FileResponse getFile(UUID id) {
