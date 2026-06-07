@@ -5,6 +5,8 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.StatObjectArgs;
+import io.minio.errors.ErrorResponseException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +25,7 @@ public class ChunkStorageService {
 
 	public void uploadChunk(String hash, byte[] data) {
 		try {
-			log.info("Uploading chunk: {}", hash);
-			createBucketIfMissing();
+			log.info("Uploading new chunk: {}", hash);
 			minioClient.putObject(
 					PutObjectArgs.builder()
 							.bucket(storageProperties.bucket())
@@ -35,6 +36,25 @@ public class ChunkStorageService {
 			log.info("Uploaded chunk: {}", hash);
 		} catch (Exception e) {
 			throw new IllegalStateException("Could not upload chunk to MinIO", e);
+		}
+	}
+
+	public boolean chunkExists(String hash) {
+		try {
+			minioClient.statObject(
+					StatObjectArgs.builder()
+							.bucket(storageProperties.bucket())
+							.object(hash)
+							.build()
+			);
+			return true;
+		} catch (ErrorResponseException e) {
+			if ("NoSuchKey".equals(e.errorResponse().code())) {
+				return false;
+			}
+			throw new IllegalStateException("Could not check chunk in MinIO", e);
+		} catch (Exception e) {
+			throw new IllegalStateException("Could not check chunk in MinIO", e);
 		}
 	}
 
