@@ -1,3 +1,5 @@
 .DS_Store
 .vscode/
 target/
+sync-agent/watched-folder/*
+!sync-agent/watched-folder/.gitkeep

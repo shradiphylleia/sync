@@ -1,0 +1,11 @@
+Agent started.
+Watching folder:
+E:\Projects\sync\sync-agent\watched-folder
+Detected file:
+agent-demo.txt
+Uploading file:
+agent-demo.txt
+Upload successful:
+agent-demo.txt
+uploadedChunks=1
+reusedChunks=0

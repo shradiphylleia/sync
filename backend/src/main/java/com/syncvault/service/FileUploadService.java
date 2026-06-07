@@ -1,12 +1,14 @@
 package com.syncvault.service;
 
 import com.syncvault.dto.ChunkUploadResponse;
+import com.syncvault.dto.SyncEvent;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,6 +20,7 @@ public class FileUploadService {
 
 	private final ChunkingService chunkingService;
 	private final ChunkStorageService chunkStorageService;
+	private final SyncEventPublisher syncEventPublisher;
 
 	public ChunkUploadResponse upload(MultipartFile file) {
 		List<ChunkingService.ChunkData> chunks = chunkingService.chunk(file);
@@ -37,13 +40,22 @@ public class FileUploadService {
 			uploadedChunks++;
 		}
 
-		return new ChunkUploadResponse(
+		ChunkUploadResponse response = new ChunkUploadResponse(
 				file.getOriginalFilename(),
 				chunks.size(),
 				uploadedChunks,
 				reusedChunks,
 				calculateDeduplicationRatio(chunks.size(), reusedChunks)
 		);
+
+		syncEventPublisher.publish(new SyncEvent(
+				response.fileName(),
+				response.uploadedChunks(),
+				response.reusedChunks(),
+				Instant.now()
+		));
+
+		return response;
 	}
 
 	private String calculateDeduplicationRatio(int totalChunks, int reusedChunks) {
