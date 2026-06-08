@@ -6,7 +6,9 @@ a distributed file synchronization prototype that explores how modern storage sy
 instead of treating files as single blobs, files are split into chunks, each chunk is hashed using SHA-256 and chunks are then  stored in object storage using their content hash as the identifier. essentially meaning uploading the same file twice does not store the same data twice.
 a lightweight sync agent monitors a local folder, automatically uploads new files, and the backend publishes synchronization events through Redis after processing is complete.
 
+<img width="1037" height="537" alt="Screenshot 2026-06-08 102009" src="https://github.com/user-attachments/assets/f264e8a0-2eab-47da-bd96-b14650326a80" />
 
+<img width="701" height="717" alt="Screenshot 2026-06-08 103837" src="https://github.com/user-attachments/assets/f2d6bb5f-85ae-4d6e-a9f3-bdee79dff96f" />
 A file enters the system:
 ```text
 jimjam.pdf
