@@ -138,3 +138,6 @@ OPEN TO COLLAB & work :)
 
 Conflict detection between concurrent updates.
 Optimistic concurrency control.
+
+## side note:
+currently empty files generate zero chunks and therefore no uploads. deliberately kept that behaviour simple for the prototype, though another valid design would be storing a canonical empty-file hash.
