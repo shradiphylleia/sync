@@ -1,5 +1,10 @@
 # SyncVault
 
+## demo: 
+you can find the demo in the project root: pow_sync
+
+the files should be uploaded to (src-> target -> watched-folder)
+
 ## tldr:
 a distributed file synchronization prototype that explores how modern storage systems avoid storing the same content multiple times.
 
