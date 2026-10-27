@@ -122,11 +122,14 @@ docker compose up -d
 
 start backend:
 ```bash
+cd backend
 ./mvnw spring-boot:run
 ```
 
 start the sync agent:
 ```bash
+cd sync-agent
+cd target
 java -jar sync-agent.jar
 ```
 
